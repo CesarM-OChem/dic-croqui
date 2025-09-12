@@ -1,0 +1,13 @@
+{
+  "files": {
+    "main.css": "/dic-croqui/static/css/main.1307a33b.css",
+    "main.js": "/dic-croqui/static/js/main.f1b17328.js",
+    "index.html": "/dic-croqui/index.html",
+    "main.1307a33b.css.map": "/dic-croqui/static/css/main.1307a33b.css.map",
+    "main.f1b17328.js.map": "/dic-croqui/static/js/main.f1b17328.js.map"
+  },
+  "entrypoints": [
+    "static/css/main.1307a33b.css",
+    "static/js/main.f1b17328.js"
+  ]
+}
