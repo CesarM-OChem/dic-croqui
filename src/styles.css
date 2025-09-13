@@ -33,6 +33,12 @@ button {
 .controls { margin:12px 0; display:flex; gap:8px; align-items:center; flex-wrap:wrap; }
 
 /* Plate grid */
+.plate-content{
+  display: flex;
+  flex-direction: column;
+  gap: 56px;
+}
+
 .plate {
   margin: 18px 0;
   padding: 10px;

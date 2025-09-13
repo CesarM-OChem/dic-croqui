@@ -23,35 +23,75 @@ export default function Plate({ plate }) {
   const labelColor = {};
   labels.forEach((l,i)=> labelColor[l] = pal[i]);
 
+  // calcular tamanho dos poços com base no número de caracteres do maior texto
+  var charNumber = 0;
+  var maxLines = 1;
+  var minHeight = 0;
+  var minWidth = 36;
+  
+  wells.forEach(w => {
+    if (w.assigned && w.assigned.label) 
+      w.assigned.label = w.assigned.label.replace(/\|/g, "\n");
+    // pega o texto que vai dentro (coord + label opcional)
+    const text = `${w.coord}${w.assigned ? w.assigned.label : ""}`;
+    const lines = text.split("\n");
+
+    // pega o maior número de linhas
+    if(lines.length > maxLines)
+      maxLines = lines.length;
+
+    // pega o maior comprimento de linha
+    const maxLineLength = Math.max(...lines.map(l => l.length));
+    if (maxLineLength > charNumber)
+      charNumber = maxLineLength;
+  });
+
+  minWidth = charNumber * 8 + 20; // 6px por caractere, 20px de base
+  minHeight = maxLines * 12 + 36; // 12px por linha, 36px de base
+  
   const gridStyle = {
     display: "grid",
     gridTemplateColumns: `repeat(${cols}, 44px)`,
     gridAutoRows: '44px',
-    gap: 6
+    columnGap: 6 + minWidth/1.25,
+    rowGap: minHeight
   };
 
   return (
     <div className="plate">
       <h3>Placa {plateId} — {rows}x{cols}</h3>
-      <div style={gridStyle} className="well-grid">
-        {wells.map((w, idx) => {
-          const bg = w.assigned ? labelColor[w.assigned.label] : "#fff";
-          return (
-            <div key={idx} className="well" title={`${w.coord} ${w.assigned ? w.assigned.label : ''}`} style={{ background: bg }}>
-              <div style={{fontSize:10, position:'absolute', marginTop:-18, left:8}}>{w.coord}</div>
-              <div>{w.assigned ? w.assigned.label : ""}</div>
-            </div>
-          );
-        })}
-      </div>
+      <div className="plate-content">
+        <div style={gridStyle} className="well-grid">
+          {wells.map((w, idx) => {
+            const bg = w.assigned ? labelColor[w.assigned.label] : "#fff";
+            return (
+              <div
+                key={idx}
+                className="well"
+                title={`${w.coord} ${w.assigned ? w.assigned.label : ''}`}
+                style={{
+                  background: bg,
+                  minHeight: `${minHeight}px`,
+                  minWidth: `${minWidth}px`
+                }}
+              >
+                <div style={{ whiteSpace: "pre-line" }}>
+                  {w.assigned ? w.assigned.label : ""}
+                </div>
+              </div>
+            );
+          })}
 
-      <div className="legend">
-        {labels.map(l => (
-          <div key={l} className="legend-item">
-            <div className="color-box" style={{background: labelColor[l]}}></div>
-            <div style={{fontSize:13}}>{l}</div>
-          </div>
-        ))}
+        </div>
+
+        <div className="legend">
+          {labels.map(l => (
+            <div key={l} className="legend-item">
+              <div className="color-box" style={{background: labelColor[l]}}></div>
+              <div style={{fontSize:13}}>{l}</div>
+            </div>
+          ))}
+        </div>
       </div>
     </div>
   );
