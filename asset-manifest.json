@@ -1,13 +1,13 @@
 {
   "files": {
     "main.css": "/dic-croqui/static/css/main.2050eb4a.css",
-    "main.js": "/dic-croqui/static/js/main.c2166a72.js",
+    "main.js": "/dic-croqui/static/js/main.bc082e13.js",
     "index.html": "/dic-croqui/index.html",
     "main.2050eb4a.css.map": "/dic-croqui/static/css/main.2050eb4a.css.map",
-    "main.c2166a72.js.map": "/dic-croqui/static/js/main.c2166a72.js.map"
+    "main.bc082e13.js.map": "/dic-croqui/static/js/main.bc082e13.js.map"
   },
   "entrypoints": [
     "static/css/main.2050eb4a.css",
-    "static/js/main.c2166a72.js"
+    "static/js/main.bc082e13.js"
   ]
 }
