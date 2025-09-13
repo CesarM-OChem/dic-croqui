@@ -26,7 +26,8 @@ export default function App() {
   const [factors, setFactors] = useState([]);
   const [factorLevelsInput, setFactorLevelsInput] = useState({}); // temporary storage keyed by factor index
   const [controlsCount, setControlsCount] = useState(1);
-  const [controlsInput, setControlsInput] = useState([]);
+  const [controlsInput, setControlsInput] = useState([]); // parsed array of control names
+  const [controlsRaw, setControlsRaw] = useState(""); // raw text shown in the input (fixes the comma problem)
   const [seed, setSeed] = useState(Math.floor(Math.random()*1000000));
   const [result, setResult] = useState(null);
 
@@ -48,12 +49,18 @@ export default function App() {
   }
 
   function updateControlNames(str) {
+    // keep raw text so the input shows exactly what user types (commas included)
+    setControlsRaw(str);
+    // parse to array (used elsewhere)
     const items = str.split(",").map(s=>s.trim()).filter(Boolean);
     setControlsInput(items);
     setControlsCount(items.length || 0);
   }
 
   function handleGenerate() {
+    // ensure we parse latest raw controls (in case user hasn't blurred)
+    if (controlsRaw) updateControlNames(controlsRaw);
+
     // validate factors have levels
     const factorDefs = factors.map((f, i) => {
       const levels = factorLevelsInput[i] && factorLevelsInput[i].length >= 1 ? factorLevelsInput[i] : Array.from({length: f.n}, (_,k)=> `${f.name}_L${k+1}`);
@@ -153,7 +160,12 @@ export default function App() {
       <div className="form-row">
         <div className="form-col">
           <label>Número de controles (digite nomes separados por vírgula)</label>
-          <input type="text" value={controlsInput.join(", ")} onChange={e=> updateControlNames(e.target.value)} placeholder="CTRL, Branco, Solvente" />
+          <input
+            type="text"
+            value={controlsRaw}
+            onChange={e=> updateControlNames(e.target.value)}
+            placeholder="CTRL, Branco, Solvente"
+          />
         </div>
       </div>
 

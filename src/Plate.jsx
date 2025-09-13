@@ -3,8 +3,8 @@ import React from "react";
 // simple color palette generator
 function palette(n) {
   const arr = [];
-  for (let i=0;i<n;i++){
-    const hue = Math.round((360 * i)/n);
+  for (let i = 0; i < n; i++) {
+    const hue = Math.round((360 * i) / n);
     arr.push(`hsl(${hue} 70% 55%)`);
   }
   return arr;
@@ -12,6 +12,7 @@ function palette(n) {
 
 export default function Plate({ plate }) {
   const { rows, cols, wells, plateId } = plate;
+
   // collect unique labels for legend and assign colors
   const labels = [];
   wells.forEach(w => {
@@ -21,74 +22,71 @@ export default function Plate({ plate }) {
   });
   const pal = palette(Math.max(1, labels.length));
   const labelColor = {};
-  labels.forEach((l,i)=> labelColor[l] = pal[i]);
+  labels.forEach((l, i) => (labelColor[l] = pal[i]));
 
   // calcular tamanho dos poços com base no número de caracteres do maior texto
-  var charNumber = 0;
-  var maxLines = 1;
-  var minHeight = 0;
-  var minWidth = 36;
-  
+  let charNumber = 0;
+  let maxLines = 1;
+  let minHeight = 0;
+  let minWidth = 36;
+
   wells.forEach(w => {
-    if (w.assigned && w.assigned.label) 
-      w.assigned.label = w.assigned.label.replace(/\|/g, "\n");
-    // pega o texto que vai dentro (coord + label opcional)
-    const text = `${w.coord}${w.assigned ? w.assigned.label : ""}`;
+    const displayLabel = w.assigned?.label?.replace(/\|/g, "\n") || "";
+    const text = `${w.coord}${displayLabel}`;
     const lines = text.split("\n");
 
-    // pega o maior número de linhas
-    if(lines.length > maxLines)
-      maxLines = lines.length;
+    if (lines.length > maxLines) maxLines = lines.length;
 
-    // pega o maior comprimento de linha
     const maxLineLength = Math.max(...lines.map(l => l.length));
-    if (maxLineLength > charNumber)
-      charNumber = maxLineLength;
+    if (maxLineLength > charNumber) charNumber = maxLineLength;
   });
 
-  minWidth = charNumber * 8 + 20; // 6px por caractere, 20px de base
-  minHeight = maxLines * 12 + 36; // 12px por linha, 36px de base
-  
+  minWidth = charNumber * 8 + 20;
+  minHeight = maxLines * 12 + 36;
+
   const gridStyle = {
     display: "grid",
     gridTemplateColumns: `repeat(${cols}, 44px)`,
-    gridAutoRows: '44px',
-    columnGap: 6 + minWidth/1.25,
+    gridAutoRows: "44px",
+    columnGap: 6 + minWidth / 1.25,
     rowGap: minHeight
   };
 
   return (
     <div className="plate">
-      <h3>Placa {plateId} — {rows}x{cols}</h3>
+      <h3>
+        Placa {plateId} — {rows}x{cols}
+      </h3>
       <div className="plate-content">
         <div style={gridStyle} className="well-grid">
           {wells.map((w, idx) => {
+            const displayLabel = w.assigned?.label?.replace(/\|/g, "\n") || "";
             const bg = w.assigned ? labelColor[w.assigned.label] : "#fff";
             return (
               <div
                 key={idx}
                 className="well"
-                title={`${w.coord} ${w.assigned ? w.assigned.label : ''}`}
+                title={`${w.coord} ${w.assigned ? w.assigned.label : ""}`}
                 style={{
                   background: bg,
                   minHeight: `${minHeight}px`,
                   minWidth: `${minWidth}px`
                 }}
               >
-                <div style={{ whiteSpace: "pre-line" }}>
-                  {w.assigned ? w.assigned.label : ""}
-                </div>
+                <div style={{ whiteSpace: "pre-line" }}>{displayLabel}</div>
               </div>
             );
           })}
-
         </div>
 
         <div className="legend">
           {labels.map(l => (
             <div key={l} className="legend-item">
-              <div className="color-box" style={{background: labelColor[l]}}></div>
-              <div style={{fontSize:13}}>{l}</div>
+              <div
+                className="color-box"
+                style={{ background: labelColor[l] }}
+              ></div>
+              <div style={{ fontSize: 13 }}>{l}</div>
             </div>
           ))}
         </div>
